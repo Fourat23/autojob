@@ -1,0 +1,39 @@
+# === Node ===
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Logs ===
+logs
+*.log
+*.csv
+*.out
+*.pid
+*.seed
+*.tgz
+
+# === Coverage reports ===
+coverage/
+*.lcov
+
+# === Jest ===
+jest-test-results.json
+test-results.xml
+
+# === VSCode ===
+.vscode/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Frontend / Backend structure ===
+client/.env
+client/node_modules/
+server/.env
+server/node_modules/
