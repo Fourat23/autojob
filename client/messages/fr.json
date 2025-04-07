@@ -1,0 +1,38 @@
+{
+  "login.title": "Se connecter à AutoJob",
+  "login.registerTitle": "Créer un compte",
+  "login.name": "Nom complet",
+  "login.email": "Adresse e-mail",
+  "login.password": "Mot de passe",
+  "login.error.name": "Le nom est requis.",
+  "login.error.email.required": "L'e-mail est requis.",
+  "login.error.email.invalid": "Format d'e-mail invalide.",
+  "login.error.password": "Le mot de passe est requis.",
+  "login.submit.login": "Se connecter",
+  "login.submit.register": "Créer mon compte",
+  "login.switch.toLogin": "Connexion",
+  "login.switch.toRegister": "Créer un compte",
+  "login.switch.prompt.login": "Déjà un compte ?",
+  "login.switch.prompt.register": "Pas encore de compte ?",
+
+  "home.title": "Automatise ta recherche d'emploi",
+  "home.description": "AutoJob te connecte en un clic aux bonnes opportunités. Publie ton CV ou ton offre, et laisse notre système intelligent faire le travail.",
+  "home.postCV": "Poster un CV",
+  "home.postJob": "Publier une offre",
+  "home.recentOffers": "Offres récentes",
+  "home.offer.1": "Développeur React – Paris",
+  "home.offer.2": "UX Designer – Lyon",
+
+  "dashboard.welcome": "👋 Bienvenue {{name}}",
+  "dashboard.subtitle": "Voici un aperçu de votre tableau de bord AutoJob.",
+  "dashboard.activity": "Activité",
+  "dashboard.applications.sent": "{{count}} candidatures envoyées",
+  "dashboard.suggestions": "Suggestions",
+  "dashboard.suggestions.empty": "Pas encore de suggestions",
+  "dashboard.cv.title": "📄 Mon CV",
+  "dashboard.cv.uploaded": "Déposé le {{date}}",
+  "dashboard.cv.view": "Voir",
+  "dashboard.cv.update": "Mettre à jour",
+
+  "footer.rights": "Tous droits réservés."
+}

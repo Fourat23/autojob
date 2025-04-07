@@ -1,0 +1,38 @@
+{
+  "login.title": "Log in to AutoJob",
+  "login.registerTitle": "Create an account",
+  "login.name": "Full name",
+  "login.email": "Email address",
+  "login.password": "Password",
+  "login.error.name": "Name is required.",
+  "login.error.email.required": "Email is required.",
+  "login.error.email.invalid": "Invalid email format.",
+  "login.error.password": "Password is required.",
+  "login.submit.login": "Log in",
+  "login.submit.register": "Create my account",
+  "login.switch.toLogin": "Login",
+  "login.switch.toRegister": "Create account",
+  "login.switch.prompt.login": "Already have an account?",
+  "login.switch.prompt.register": "Don't have an account yet?",
+
+  "home.title": "Automate your job search",
+  "home.description": "AutoJob connects you with the right opportunities in one click. Upload your resume or job offer, and let our smart system do the work.",
+  "home.postCV": "Post a CV",
+  "home.postJob": "Post a job offer",
+  "home.recentOffers": "Recent offers",
+  "home.offer.1": "React Developer – Paris",
+  "home.offer.2": "UX Designer – Lyon",
+
+  "dashboard.welcome": "👋 Welcome {{name}}",
+  "dashboard.subtitle": "Here's an overview of your AutoJob dashboard.",
+  "dashboard.activity": "Activity",
+  "dashboard.applications.sent": "{{count}} applications sent",
+  "dashboard.suggestions": "Suggestions",
+  "dashboard.suggestions.empty": "No suggestions yet",
+  "dashboard.cv.title": "📄 My CV",
+  "dashboard.cv.uploaded": "Uploaded on {{date}}",
+  "dashboard.cv.view": "View",
+  "dashboard.cv.update": "Update",
+
+  "footer.rights": "All rights reserved."
+}

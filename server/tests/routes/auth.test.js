@@ -83,7 +83,7 @@ describe("POST /api/register", () => {
     });
 
     expect(res.statusCode).toBe(500);
-    expect(res.body.error).toBe("Server Error.");
+    expect(res.body.error).toBe("Server error");
   });
 
   it("❌ should return 400 if email is missing", async () => {

@@ -1,5 +1,13 @@
 const { Pool } = require("pg");
-require("dotenv").config();
+const path = require("path");
+
+// Load .env.test if NODE_ENV === "test"
+require("dotenv").config({
+  path:
+    process.env.NODE_ENV === "test"
+      ? path.resolve(__dirname, "../.env.test")
+      : path.resolve(__dirname, "../.env"),
+});
 
 // Initialize PostgreSQL connection pool using env vars or fallback defaults
 const pool = new Pool({

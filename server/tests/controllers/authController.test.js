@@ -4,15 +4,22 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../../db");
 
-// Mocks for external modules
+// 🧪 Mock external modules
 jest.mock("../../db");
 jest.mock("bcrypt");
 jest.mock("jsonwebtoken");
 
-// Helper: create mock response object
+// 🧪 Mock logger to suppress real logs during test
+jest.mock("../../logger", () => ({
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+}));
+
+// 🧪 Utility: mock Express response object
 const mockRes = () => {
   const res = {};
-  res.status = jest.fn().mockReturnValue(res); // Chainable
+  res.status = jest.fn().mockReturnValue(res);
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
@@ -29,11 +36,13 @@ describe("🧪 authController", () => {
     it("❌ should return 400 if any field is missing", async () => {
       const req = { body: { email: "test@example.com" } };
       const res = mockRes();
+      const next = jest.fn();
 
-      await register(req, res);
+      await register(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Invalid input." });
+      expect(next).not.toHaveBeenCalled();
     });
 
     it("❌ should return 400 if user already exists", async () => {
@@ -41,13 +50,15 @@ describe("🧪 authController", () => {
         body: { name: "Test", email: "test@example.com", password: "pass123" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
       db.query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
 
-      await register(req, res);
+      await register(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email already in use." });
+      expect(next).not.toHaveBeenCalled();
     });
 
     it("✅ should register new user and return 201", async () => {
@@ -55,9 +66,10 @@ describe("🧪 authController", () => {
         body: { name: "John", email: "john@example.com", password: "pass123" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
       db.query
-        .mockResolvedValueOnce({ rows: [] }) // No user exists
+        .mockResolvedValueOnce({ rows: [] }) // No user
         .mockResolvedValueOnce({
           rows: [
             {
@@ -71,7 +83,7 @@ describe("🧪 authController", () => {
 
       bcrypt.hash.mockResolvedValue("hashedPassword");
 
-      await register(req, res);
+      await register(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
@@ -81,20 +93,23 @@ describe("🧪 authController", () => {
           email: "john@example.com",
         }),
       });
+      expect(next).not.toHaveBeenCalled();
     });
 
-    it("❌ should return 500 on DB error", async () => {
+    it("❌ should call next(err) on unexpected error", async () => {
       const req = {
         body: { name: "Jane", email: "jane@example.com", password: "pass123" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
-      db.query.mockRejectedValueOnce(new Error("DB error"));
+      db.query.mockRejectedValueOnce(new Error("DB crash"));
 
-      await register(req, res);
+      await register(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "Server Error." });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 
@@ -105,13 +120,15 @@ describe("🧪 authController", () => {
     it("❌ should return 400 if email or password is missing", async () => {
       const req = { body: { email: "" } };
       const res = mockRes();
+      const next = jest.fn();
 
-      await login(req, res);
+      await login(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Email and password are required.",
       });
+      expect(next).not.toHaveBeenCalled();
     });
 
     it("❌ should return 400 if user is not found", async () => {
@@ -119,15 +136,17 @@ describe("🧪 authController", () => {
         body: { email: "notfound@example.com", password: "pass123" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
       db.query.mockResolvedValueOnce({ rows: [] });
 
-      await login(req, res);
+      await login(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Invalid email or password.",
       });
+      expect(next).not.toHaveBeenCalled();
     });
 
     it("❌ should return 400 if password is invalid", async () => {
@@ -135,6 +154,7 @@ describe("🧪 authController", () => {
         body: { email: "john@example.com", password: "wrongpass" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
       db.query.mockResolvedValueOnce({
         rows: [
@@ -148,12 +168,13 @@ describe("🧪 authController", () => {
 
       bcrypt.compare.mockResolvedValue(false);
 
-      await login(req, res);
+      await login(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         error: "Invalid email or password.",
       });
+      expect(next).not.toHaveBeenCalled();
     });
 
     it("✅ should login and return token", async () => {
@@ -161,6 +182,7 @@ describe("🧪 authController", () => {
         body: { email: "john@example.com", password: "validpass" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
       db.query.mockResolvedValueOnce({
         rows: [
@@ -177,7 +199,7 @@ describe("🧪 authController", () => {
       bcrypt.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue("faketoken");
 
-      await login(req, res);
+      await login(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -187,25 +209,28 @@ describe("🧪 authController", () => {
           email: "john@example.com",
         }),
       });
+      expect(next).not.toHaveBeenCalled();
     });
 
-    it("❌ should return 500 on DB error", async () => {
+    it("❌ should call next(err) on unexpected error", async () => {
       const req = {
         body: { email: "john@example.com", password: "pass" },
       };
       const res = mockRes();
+      const next = jest.fn();
 
-      db.query.mockRejectedValueOnce(new Error("DB crash"));
+      db.query.mockRejectedValueOnce(new Error("Unexpected login failure"));
 
-      await login(req, res);
+      await login(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "Server Error." });
+      expect(res.status).not.toHaveBeenCalled();
+      expect(res.json).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     });
   });
 });
 
+// 🧹 Cleanup after all tests
 afterAll(async () => {
-  // This ensures Jest doesn't hang due to open DB connections
   await pool.end();
 });
